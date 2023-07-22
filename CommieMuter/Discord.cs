@@ -9,6 +9,7 @@ namespace CommieMuter
     {
         public const ulong COMMISSARID = 311026477057703936;
         public const ulong FUBIID = 590246495073206547;
+        public const ulong VALHALLAID = 712862603147477002;
 
         public static DiscordClient? Client { get; private set; }
 
@@ -43,7 +44,7 @@ namespace CommieMuter
             Console.WriteLine("Connected");
             Console.WriteLine();
 
-            GuildID = CheckGuildIDValidity(AskForID()).Result;
+            GuildID = VALHALLAID;
 
             Guild = Client.GetGuildAsync(GuildID).Result;
 
@@ -111,55 +112,6 @@ namespace CommieMuter
             Console.WriteLine("Unmuting Commissar");
 
             await commieMember.SetMuteAsync(false);
-        }
-
-        private static ulong AskForID()
-        {
-            string pattern = @"^\d{18}$";
-
-            Regex regex = new(pattern);
-
-            do
-            {
-                Console.Write("Give Discord server ID: ");
-                string? id = Console.ReadLine();
-
-                if (!string.IsNullOrEmpty(id) && regex.IsMatch(id) && ulong.TryParse(id, out ulong ID))
-                {
-                    return ID;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid server ID. Needs to be 18 characters long and contain only numbers\n");
-                }
-            } while (true);
-        }
-
-        private static async Task<ulong> CheckGuildIDValidity(ulong guildID)
-        {
-            DiscordGuild guild;
-
-            if (Client == null)
-            {
-                throw new NullReferenceException("Discord client was not set");
-            }
-
-            do
-            {
-                try
-                {
-                    guild = await Client.GetGuildAsync(guildID);
-                    break;
-                }
-                catch
-                {
-                    Console.WriteLine("Invalid server ID. Bot isn't on the server with such ID\n");
-                    guildID = AskForID();
-                }
-            }
-            while (true);
-
-            return guild.Id;
         }
     }
 }
