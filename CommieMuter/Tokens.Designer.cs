@@ -68,5 +68,14 @@ namespace CommieMuter {
                 return ResourceManager.GetString("DiscordToken", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to bcco9h5i9hd59fxfnblxu1mruj4gxw.
+        /// </summary>
+        internal static string TwitchAccessToken {
+            get {
+                return ResourceManager.GetString("TwitchAccessToken", resourceCulture);
+            }
+        }
     }
 }

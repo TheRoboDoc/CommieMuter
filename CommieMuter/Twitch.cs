@@ -9,20 +9,20 @@ namespace CommieMuter
 
         private static Discord? Discord;
 
-        private const string CHANNELID = "126663894"; //valkyrie_illustration Twitch channel ID
-
+        private const string CHANNELID = "126663894"; //valkyrie_illustration Twitch channel ID 126663894
+                                                      //the_robodoc Twitch channel ID 430864937
         public Twitch(Discord discord)
         {
             TwitchClient = new TwitchPubSub();
 
-            TwitchClient.OnRewardRedeemed += OnRewardRedeemed;
+            TwitchClient.OnBitsReceivedV2 += OnBitsReceivedV2;
             TwitchClient.OnListenResponse += OnResponse;
 
             TwitchClient.OnPubSubServiceConnected += ServiceConnected;
             TwitchClient.OnPubSubServiceClosed += ServiceClosed;
             TwitchClient.OnPubSubServiceError += ServiceError;
 
-            TwitchClient.ListenToRewards(CHANNELID);
+            TwitchClient.ListenToBitsEventsV2(CHANNELID);
 
             try
             {
@@ -37,6 +37,22 @@ namespace CommieMuter
             Discord = discord;
         }
 
+        private void OnBitsReceivedV2(object? sender, OnBitsReceivedV2Args e)
+        {
+            if (Discord == null)
+            {
+                throw new NullReferenceException("Discord clinet not setup");
+            }
+
+            Console.WriteLine($"\n{e.UserName} tipped {e.BitsUsed} bits");
+
+            TimeSpan time = TimeSpan.FromSeconds(e.BitsUsed / 10);
+
+            Discord.TimeSpan += time;
+
+            Discord?.MuteCommissar(time);
+        }
+
         public TwitchPubSub GetTwitchClient()
         {
             if (TwitchClient == null)
@@ -45,24 +61,6 @@ namespace CommieMuter
             }
 
             return TwitchClient;
-        }
-
-        private static void OnRewardRedeemed(object? sender, OnRewardRedeemedArgs rewardRedeemArgs)
-        {
-            string userName = rewardRedeemArgs.DisplayName;
-            string redeemTitle = rewardRedeemArgs.RewardTitle;
-
-            Console.WriteLine($"{userName} redeemed {redeemTitle}");
-
-            if (Discord == null)
-            {
-                throw new NullReferenceException("Discord client is not set");
-            }
-
-            if (redeemTitle.ToLower() == "mute commissar")
-            {
-                Discord.MuteCommissar();
-            }
         }
 
         private static void OnResponse(object? sender, OnListenResponseArgs e)
@@ -96,7 +94,7 @@ namespace CommieMuter
             }
 
             Console.WriteLine("Connected to Twitch");
-            TwitchClient.SendTopics();
+            TwitchClient.SendTopics(Tokens.TwitchAccessToken);
         }
     }
 }

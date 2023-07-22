@@ -8,14 +8,15 @@ namespace CommieMuter
     public class Discord
     {
         public const ulong COMMISSARID = 311026477057703936;
-
-        private readonly TimeSpan MutePeriod = TimeSpan.FromMinutes(1);
+        public const ulong FUBIID = 590246495073206547;
 
         public static DiscordClient? Client { get; private set; }
 
         public ulong GuildID { get; private set; }
 
         private readonly DiscordGuild Guild;
+
+        public TimeSpan TimeSpan;
 
         public Discord()
         {
@@ -45,13 +46,16 @@ namespace CommieMuter
             GuildID = CheckGuildIDValidity(AskForID()).Result;
 
             Guild = Client.GetGuildAsync(GuildID).Result;
+
+            TimeSpan = TimeSpan.FromSeconds(0);
         }
 
-        public async void MuteCommissar()
+        public async void MuteCommissar(TimeSpan time)
         {
             Console.WriteLine("Muting Commissar");
 
             bool commissarMute = false;
+            bool fubiMute = false;
 
             DiscordChannel[] channels = Guild.GetChannelsAsync().Result.ToArray();
 
@@ -59,7 +63,7 @@ namespace CommieMuter
             {
                 foreach (DiscordUser user in channel.Users)
                 {
-                    if (user.Id == COMMISSARID)
+                    if (user.Id == COMMISSARID || user.Id == FUBIID)
                     {
                         DiscordMember commieMember = await Guild.GetMemberAsync(user.Id);
 
@@ -67,12 +71,24 @@ namespace CommieMuter
 
                         _ = Task.Run(async () =>
                         {
-                            await Task.Delay(MutePeriod);
+                            do
+                            {
+                                await Task.Delay(TimeSpan);
+
+                                TimeSpan -= time;
+                            } while (TimeSpan > TimeSpan.FromSeconds(0));
 
                             await UnMuteCommissar(commieMember);
                         });
 
-                        commissarMute = true;
+                        if (user.Id == COMMISSARID)
+                        {
+                            commissarMute = true;
+                        }
+                        else if (user.Id == FUBIID)
+                        {
+                            fubiMute = true;
+                        }
 
                         break;
                     }
@@ -81,7 +97,12 @@ namespace CommieMuter
 
             if (!commissarMute)
             {
-                Console.WriteLine("Couldn't mute Commissar, is he in a voice channel?");
+                Console.WriteLine("Couldn't mute Commissar, is he in the voice channel?");
+            }
+
+            if (!fubiMute)
+            {
+                Console.WriteLine("Couldn't mute Fubi, is she in the voice channel?");
             }
         }
 
