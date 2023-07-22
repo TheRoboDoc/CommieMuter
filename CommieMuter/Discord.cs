@@ -1,7 +1,6 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using Microsoft.Extensions.Logging;
-using System.Text.RegularExpressions;
 
 namespace CommieMuter
 {
