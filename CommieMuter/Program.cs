@@ -4,18 +4,22 @@
     {
         private static void Main()
         {
-            MainAsyn().GetAwaiter().GetResult();
+            MainAsync().GetAwaiter().GetResult();
         }
 
-        
+        public static Discord? Discord { get; private set; }
 
-        private static async Task MainAsyn()
+        public static Twitch? Twitch { get; private set; }
+
+        private static async Task MainAsync()
         {
-            Twitch twitch = new();
+            Discord = new Discord();
+
+            Console.WriteLine();
+
+            Twitch = new Twitch(Discord);
 
             await Task.Delay(-1);
         }
-
-        
     }
 }
