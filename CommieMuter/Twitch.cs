@@ -26,7 +26,7 @@ namespace CommieMuter
 
             try
             {
-                Console.WriteLine("Connecting to Twtich...");
+                Program.WriteInfo("Connecting to Twtich...");
                 TwitchClient.Connect();
             }
             catch
@@ -44,7 +44,7 @@ namespace CommieMuter
                 throw new NullReferenceException("Discord clinet not setup");
             }
 
-            Console.WriteLine($"\n{e.UserName} tipped {e.BitsUsed} bits");
+            Program.WriteInfo($"\n{e.UserName} tipped {e.BitsUsed} bits");
 
             TimeSpan time = TimeSpan.FromSeconds(e.BitsUsed / 10);
 
@@ -57,7 +57,7 @@ namespace CommieMuter
         {
             if (TwitchClient == null)
             {
-                throw new NullReferenceException("Twitch client is not net");
+                throw new NullReferenceException("Twitch client is not set");
             }
 
             return TwitchClient;
@@ -67,23 +67,23 @@ namespace CommieMuter
         {
             if (!e.Successful)
             {
-                Console.WriteLine($"Twitch client error: {e.Response.Error}");
+                Program.WriteError($"Twitch client error: {e.Response.Error}");
             }
             else
             {
-                Console.WriteLine($"Listening to topic: {e.Topic}");
+                Program.WriteInfo($"Listening to topic: {e.Topic}");
                 Console.WriteLine();
             }
         }
 
         private static void ServiceError(object? sender, OnPubSubServiceErrorArgs e)
         {
-            Console.WriteLine($"Twitch client error: {e.Exception.Message}");
+            Program.WriteError($"Twitch client error: {e.Exception.Message}");
         }
 
         private static void ServiceClosed(object? sender, EventArgs e)
         {
-            Console.WriteLine("Twitch client closed");
+            Program.WriteWarning("Twitch client closed");
         }
 
         private static void ServiceConnected(object? sender, EventArgs e)
@@ -93,7 +93,7 @@ namespace CommieMuter
                 throw new NullReferenceException("Twitch client is not net");
             }
 
-            Console.WriteLine("Connected to Twitch");
+            Program.WriteSuccess("Connected to Twitch");
             TwitchClient.SendTopics(Tokens.TwitchAccessToken);
         }
     }

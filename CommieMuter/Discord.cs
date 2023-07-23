@@ -20,7 +20,7 @@ namespace CommieMuter
 
         public Discord()
         {
-            Console.WriteLine("Setting up Discord client");
+            Program.WriteInfo("Setting up Discord client");
 
             DiscordConfiguration configuration = new()
             {
@@ -36,11 +36,11 @@ namespace CommieMuter
 
             Client = new DiscordClient(configuration);
 
-            Console.WriteLine("Connecting...");
+            Program.WriteInfo("Connecting...");
 
             Client.ConnectAsync().GetAwaiter().GetResult();
 
-            Console.WriteLine("Connected");
+            Program.WriteSuccess("Connected");
             Console.WriteLine();
 
             GuildID = VALHALLAID;
@@ -52,7 +52,7 @@ namespace CommieMuter
 
         public async void MuteCommissar(TimeSpan time)
         {
-            Console.WriteLine("Muting Commissar");
+            Program.WriteInfo("Muting Commissar");
 
             bool commissarMute = false;
             bool fubiMute = false;
@@ -97,18 +97,18 @@ namespace CommieMuter
 
             if (!commissarMute)
             {
-                Console.WriteLine("Couldn't mute Commissar, is he in the voice channel?");
+                Program.WriteWarning("Couldn't mute Commissar, is he in the voice channel?");
             }
 
             if (!fubiMute)
             {
-                Console.WriteLine("Couldn't mute Fubi, is she in the voice channel?");
+                Program.WriteWarning("Couldn't mute Fubi, is she in the voice channel?");
             }
         }
 
         private static async Task UnMuteCommissar(DiscordMember commieMember)
         {
-            Console.WriteLine("Unmuting Commissar");
+            Program.WriteInfo("Unmuting Commissar");
 
             await commieMember.SetMuteAsync(false);
         }
