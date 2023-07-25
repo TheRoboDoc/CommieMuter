@@ -50,7 +50,7 @@ namespace CommieMuter
             TimeSpan = TimeSpan.FromSeconds(0);
         }
 
-        public async void MuteCommissar(TimeSpan time)
+        public async void Mute(TimeSpan time)
         {
             bool commissarMute = false;
             bool fubiMute = false;
@@ -63,11 +63,11 @@ namespace CommieMuter
                 {
                     if (user.Id == COMMISSARID || user.Id == FUBIID)
                     {       
-                        DiscordMember commieMember = await Guild.GetMemberAsync(user.Id);
+                        DiscordMember member = await Guild.GetMemberAsync(user.Id);
 
-                        Program.WriteInfo($"Muting {commieMember.DisplayName}");
+                        Program.WriteInfo($"Muting {member.DisplayName}");
 
-                        await commieMember.SetMuteAsync(true);
+                        await member.SetMuteAsync(true);
 
                         _ = Task.Run(async () =>
                         {
@@ -78,7 +78,7 @@ namespace CommieMuter
                                 TimeSpan -= time;
                             } while (TimeSpan > TimeSpan.FromSeconds(0));
 
-                            await UnMuteCommissar(commieMember);
+                            await UnMute(member);
                         });
 
                         if (user.Id == COMMISSARID)
@@ -106,11 +106,11 @@ namespace CommieMuter
             }
         }
 
-        private static async Task UnMuteCommissar(DiscordMember commieMember)
+        private static async Task UnMute(DiscordMember member)
         {
-            Program.WriteInfo($"Unmuting {commieMember.DisplayName}");
+            Program.WriteInfo($"Unmuting {member.DisplayName}");
 
-            await commieMember.SetMuteAsync(false);
+            await member.SetMuteAsync(false);
         }
     }
 }

@@ -50,7 +50,7 @@ namespace CommieMuter
 
             Discord.TimeSpan += time;
 
-            Discord?.MuteCommissar(time);
+            Discord?.Mute(time);
         }
 
         public TwitchPubSub GetTwitchClient()
