@@ -6,8 +6,8 @@ namespace CommieMuter
 {
     public class Discord
     {
-        public const ulong COMMISSARID = 311026477057703936;
-        public const ulong FUBIID = 590246495073206547;
+        public const ulong COMMISSARID = 311026477057703936;    //Commissar's user ID 311026477057703936
+        public const ulong FUBIID = 590246495073206547;         //Robo's user ID 274970913370537985 (For testing)
         public const ulong VALHALLAID = 712862603147477002;
 
         public static DiscordClient? Client { get; private set; }
