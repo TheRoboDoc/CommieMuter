@@ -37,7 +37,7 @@ namespace CommieMuter
             Discord = discord;
         }
 
-        private void OnBitsReceivedV2(object? sender, OnBitsReceivedV2Args e)
+        internal void OnBitsReceivedV2(object? sender, OnBitsReceivedV2Args e)
         {
             if (Discord == null)
             {
