@@ -41,7 +41,7 @@ namespace CommieMuter
         {
             if (Discord == null)
             {
-                throw new NullReferenceException("Discord clinet not setup");
+                throw new NullReferenceException("Discord client not setup");
             }
 
             Program.WriteInfo($"\n{e.UserName} tipped {e.BitsUsed} bits");
