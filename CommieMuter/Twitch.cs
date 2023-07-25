@@ -48,9 +48,7 @@ namespace CommieMuter
 
             TimeSpan time = TimeSpan.FromSeconds(e.BitsUsed / 10);
 
-            Discord.TimeSpan += time;
-
-            Discord?.Mute(time);
+            Discord.TimeSpans.Add(time);
         }
 
         public TwitchPubSub GetTwitchClient()

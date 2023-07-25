@@ -16,7 +16,7 @@ namespace CommieMuter
 
         private readonly DiscordGuild Guild;
 
-        public TimeSpan TimeSpan;
+        public List<TimeSpan> TimeSpans = new();
 
         public Discord()
         {
@@ -47,62 +47,73 @@ namespace CommieMuter
 
             Guild = Client.GetGuildAsync(GuildID).Result;
 
-            TimeSpan = TimeSpan.FromSeconds(0);
+            Task.Run(Mute);
         }
 
-        public async void Mute(TimeSpan time)
+        public async Task Mute()
         {
-            bool commissarMute = false;
-            bool fubiMute = false;
-
-            DiscordChannel[] channels = Guild.GetChannelsAsync().Result.ToArray();
-
-            foreach (DiscordChannel channel in channels.Where(channel => channel.Type == ChannelType.Voice))
+            while (true)
             {
-                foreach (DiscordUser user in channel.Users)
+                if (!TimeSpans.Any())
                 {
-                    if (user.Id == COMMISSARID || user.Id == FUBIID)
-                    {       
-                        DiscordMember member = await Guild.GetMemberAsync(user.Id);
-
-                        Program.WriteInfo($"Muting {member.DisplayName}");
-
-                        await member.SetMuteAsync(true);
-
-                        _ = Task.Run(async () =>
-                        {
-                            do
-                            {
-                                await Task.Delay(TimeSpan);
-
-                                TimeSpan -= time;
-                            } while (TimeSpan > TimeSpan.FromSeconds(0));
-
-                            await UnMute(member);
-                        });
-
-                        if (user.Id == COMMISSARID)
-                        {
-                            commissarMute = true;
-                        }
-                        else if (user.Id == FUBIID)
-                        {
-                            fubiMute = true;
-                        }
-                    }
-
-                    if (commissarMute && fubiMute) { break; }
+                    continue;
                 }
-            }
 
-            if (!commissarMute)
-            {
-                Program.WriteWarning("Couldn't mute Commissar, is he in the voice channel?");
-            }
+                bool commissarMute = false;
+                bool fubiMute = false;
 
-            if (!fubiMute)
-            {
-                Program.WriteWarning("Couldn't mute Fubi, is she in the voice channel?");
+                DiscordChannel[] channels = Guild.GetChannelsAsync().Result.ToArray();
+
+                DiscordMember[] members = Array.Empty<DiscordMember>();
+
+                foreach (DiscordChannel channel in channels.Where(channel => channel.Type == ChannelType.Voice))
+                {
+                    foreach (DiscordUser user in channel.Users)
+                    {
+                        if (user.Id == COMMISSARID || user.Id == FUBIID)
+                        {
+                            DiscordMember member = await Guild.GetMemberAsync(user.Id);
+
+                            Program.WriteInfo($"Muting {member.DisplayName}");
+
+                            await member.SetMuteAsync(true);
+
+                            members = members.Append(member).ToArray();
+
+                            if (user.Id == COMMISSARID)
+                            {
+                                commissarMute = true;
+                            }
+                            else if (user.Id == FUBIID)
+                            {
+                                fubiMute = true;
+                            }
+                        }
+
+                        if (commissarMute && fubiMute) { break; }
+                    }
+                }
+
+                if (!commissarMute)
+                {
+                    Program.WriteWarning("Couldn't mute Commissar, is he in the voice channel?");
+                }
+
+                if (!fubiMute)
+                {
+                    Program.WriteWarning("Couldn't mute Fubi, is she in the voice channel?");
+                }
+
+                await Task.Delay(TimeSpans.First());
+
+                TimeSpans.RemoveAt(0);
+
+                if (TimeSpans.Any()) { continue; }
+
+                foreach(DiscordMember member in  members)
+                {
+                    await UnMute(member);
+                }
             }
         }
 
