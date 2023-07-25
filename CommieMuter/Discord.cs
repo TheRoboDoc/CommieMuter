@@ -89,9 +89,9 @@ namespace CommieMuter
                         {
                             fubiMute = true;
                         }
-
-                        break;
                     }
+
+                    if (commissarMute && fubiMute) { break; }
                 }
             }
 
